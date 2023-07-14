@@ -30,12 +30,12 @@ P[0, 0, 1, 1] = P[1, 1, 0, 0] = P[2, 2, 0, 0] = P[0, 0, 2, 2] = P[1, 1, 2, 2] = 
 P[0, 1, 0, 1] = P[1, 0, 0, 1] = P[1, 0, 1, 0] = P[0, 1, 1, 0] = P[0, 2, 0, 2] = P[2, 0, 0, 2] = P[2, 0, 2, 0] = P[0, 2, 2, 0] = P[2, 1, 2, 1] = P[2, 1, 1, 2] = P[1, 2, 1, 2] = P[1, 2, 2, 1] = 75.4*10**9
 EP = 0
 deltE = E
-IntSigm = []
-IntE = []
+IntSigm = [0]
+IntE = [0]
 i = 0
-for deltT in range(0,1000):
+while IntE[i] <= 0.01:
     SigmaP = np.tensordot(P, deltE, axes=2)
-    Sigm = Sigm + SigmaP*0.001
+    Sigm = Sigm + SigmaP*0.01
     IntSigm.append(((2 / 3) * (np.tensordot(Sigm, Sigm, axes=2))) ** (1 / 2))
     EP = 0
     for p in range(1, k):
@@ -47,8 +47,9 @@ for deltT in range(0,1000):
             GradSkorosti = YskorostSdviga0 * ((T[p] / Tkrit) ** (1/m))
         EP += GradSkorosti*np.tensordot(Bvector[p],Nvector[p],axes=0)
     deltE = E-EP
-    Epsi = Epsi + E * 0.001
+    Epsi = Epsi + E * 0.01
     IntE.append(((2 / 3) * (np.tensordot(Epsi, Epsi, axes=2))) ** (1 / 2))
+    i+=1
 print(Sigm)
 with open("IntSigm.txt", "a") as file:
     file.write(f"\n {IntSigm} ")
